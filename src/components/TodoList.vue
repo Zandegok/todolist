@@ -8,6 +8,7 @@
           type="text"
           placeholder="Введите задачу здесь"
           class="form-control form-input me-3"
+          :class="isValidTask ? 'input-valid' : 'input-not-valid'"
       />
       <button type="submit" class="submit-btn px-3 py-2" @click="addNewTodoItem">
         +
@@ -29,46 +30,21 @@
       <div class="col-5 text-end action-btn">
         <div class="d-flex justify-content-end">
           <div @click="moveUpTodoItem(index)">
-            <i class="ms-4">U</i>
+            <b-icon-arrow-up class="my-icon-size ms-4"/>
           </div>
           <div @click="moveDownTodoItem(index)">
-            <i class="ms-4">D</i>
+            <b-icon-arrow-down class="my-icon-size ms-4"/>
           </div>
+
           <div @click="changeTodoItemStatus(index)">
-            <i class="ms-4">
-              {{ todoItem.status === todoItemStatuses.InProgress ? 'Done' : 'InProgress' }}
-            </i>
+            <b-icon-check-lg v-if="todoItem.status===todoItemStatuses.InProgress" class="my-icon-size ms-4"/>
+            <b-icon-hourglass-split v-else class="my-icon-size ms-4"/>
           </div>
           <div @click="deleteTodoItem(index)">
-            <i class="ms-4">DEL</i>
+            <b-icon-x-lg class="my-icon-size ms-4"/>
           </div>
         </div>
       </div>
-
-      <!--      <div class="col-2">-->
-      <!--        <div class="d-flex justify-content-start align-items-center">-->
-      <!--          <div-->
-      <!--              class="status-indicator mb-1 me-2"-->
-      <!--              :class="{-->
-      <!--              'status-indicator-todo': todo.status === 'to-do',-->
-      <!--              'status-indicator-ongoing': todo.status === 'on-going',-->
-      <!--              'status-indicator-finished': todo.status === 'finished',-->
-      <!--            }"-->
-      <!--          ></div>-->
-      <!--          <div-->
-      <!--              class="status-text"-->
-      <!--              @click="changeStatus(index)"-->
-      <!--              :class="{-->
-      <!--              'status-text-todo': todo.status === 'to-do',-->
-      <!--              'status-text-ongoing': todo.status === 'on-going',-->
-      <!--              'status-text-finished': todo.status === 'finished',-->
-      <!--            }"-->
-      <!--          >-->
-      <!--            <h5>{{ todo.status }}</h5>-->
-      <!--          </div>-->
-      <!--        </div>-->
-      <!--      </div>-->
-
 
     </div>
 
@@ -88,12 +64,14 @@ export default {
   },
   methods: {
     addNewTodoItem() {
-      this.todoItems.push({
-        text: this.newTodoItemText,
-        status: this.todoItemStatuses.InProgress
-      });
+      if (this.isValidTask) {
+        this.todoItems.push({
+          text: this.newTodoItemText,
+          status: this.todoItemStatuses.InProgress
+        });
 
-      this.newTodoItemText = "";
+        this.newTodoItemText = "";
+      }
     },
     changeTodoItemStatus(index) {
       let currentStatus = this.todoItems[index].status;
@@ -119,8 +97,13 @@ export default {
     },
     deleteTodoItem(index) {
       this.todoItems.splice(index, 1);
+    },
+  },
+  computed: {
+    isValidTask() {
+      return this.newTodoItemText.trim().length > 0 && this.newTodoItemText.trim().length < 30;
     }
-  }
+  },
 }
 </script>
 
@@ -142,4 +125,27 @@ export default {
   font-weight: 800;
   color: #333;
 }
+
+.my-icon-size {
+  font-size: 20px;
+}
+
+.input-not-valid {
+  outline: none !important;
+  box-shadow: none !important;
+
+  border-style: solid !important;
+  border-width: 1px;
+  border-color: red !important;
+}
+
+.input-valid {
+  outline: none !important;
+  box-shadow: none !important;
+
+  border-style: solid !important;
+  border-width: 1px;
+  border-color: green !important;
+}
+
 </style>
